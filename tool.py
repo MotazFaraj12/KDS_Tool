@@ -12,8 +12,7 @@ def fetch_data(connector):
         response = requests.get(url)
         if response.status_code == 200:
             data = response.json()  # or response.text, depending on the API response format
-            print(data[0]['branch']['name_localized'])
-            #time.sleep(10)
+            print(data)
             #connector.save_data(data)  # Save data to the database
         else:
             print(f"Failed to fetch data: {response.status_code}")
@@ -23,7 +22,7 @@ def fetch_data(connector):
 def run_periodically(interval, connector):
     while True:
         fetch_data(connector)
-        #time.sleep(interval)
+        time.sleep(interval)
 
 if __name__ == "__main__":
     connector = SQLConnectorDP()
