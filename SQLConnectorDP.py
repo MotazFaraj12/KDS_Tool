@@ -43,6 +43,11 @@ class SQLConnectorDP:
             print("Connection successful!")
         except pyodbc.Error as ex:
             print(f"Error: {str(ex)}")
+    
+    def save_data(self, data):
+        for key, value in data.items():
+            self.cursor.execute("INSERT INTO your_table_name (key, value) VALUES (?, ?)", (key, value))
+        self.conn.commit()
 
     def close(self):
         if self.cursor:
