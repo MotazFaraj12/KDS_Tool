@@ -44,10 +44,32 @@ class SQLConnectorDP:
         except pyodbc.Error as ex:
             print(f"Error: {str(ex)}")
     
-    def save_data(self, data):
+    def select_orders(self , id):
+        self.cursor.execute("SELECT order_id, table_id,order_status,order_time,completion_time,order_source, order_number FROM dbo.Orders WHERE order_id = ?", (id,))
+        rows = self.cursor.fetchall()
+        return [row[0] for row in rows]
+
+    def select_order_item(self , id):
+        self.cursor.execute("SELECT order_item_id,menu_item_id,special_instruction,status,prep_start_time,prep_end_time,prep_time,modifiers,LastScreen,OnTimeStatus, order_id FROM dbo.OrderMenuItem WHERE order_id = ?", (id,))
+        rows = self.cursor.fetchall()
+        return [row[0] for row in rows]    
+      
+    def update_order(self, id, new_data):
+        self.cursor.execute("UPDATE dbo.Orders SET data = ? WHERE order_id = ?", (new_data, id))
+        self.connection.commit()
+    
+    def update_order_item(self, id, new_data):
+        self.cursor.execute("UPDATE dbo.Orders SET data = ? WHERE order_id = ?", (new_data, id))
+        self.connection.commit()
+    
+    def save_order(self, data):
+        self.cursor.execute("INSERT INTO Order (order_id,table_id,order_status,order_time,completion_time,order_source, order_number) VALUES (?,?,?,?,?,?,?)", (data['id'], data['table_id'], data['status'], data['order_time'], data['completion_time'], data['order_source'], data['order_number']))
+        self.connection.commit()
+
+    def save_order_item(self, data):
         for key, value in data.items():
-            self.cursor.execute("INSERT INTO your_table_name (key, value) VALUES (?, ?)", (key, value))
-        self.conn.commit()
+            self.cursor.execute("INSERT INTO OrderMenuItem (order_item_id,menu_item_id,special_instruction,status,prep_start_time,prep_end_time,prep_time,modifiers,LastScreen,OnTimeStatus, order_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)", (value['order_item_id'], value['menu_item_id'], value['special_instruction'], value['status'], value['prep_start_time'], value['prep_end_time'], value['prep_time'], value['modifiers'], value['LastScreen'], value['OnTimeStatus'], value['order_id']))
+        self.connection.commit()
 
     def close(self):
         if self.cursor:
