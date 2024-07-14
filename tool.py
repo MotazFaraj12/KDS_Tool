@@ -5,7 +5,7 @@ import sys
 from faker import Faker
 import pandas as pd
 
-# Reconfigure stdout to support UTF-8 encoding
+# Reconfigure stdout to support UTF-8 encoding 123
 sys.stdout.reconfigure(encoding='utf-8')
 
 connector = SQLConnectorDP()
